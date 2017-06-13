@@ -195,11 +195,13 @@
       <artifactId>httpmime</artifactId>
       <version>4.5</version>
     </dependency>
+    <!--  
     <dependency>
       <groupId>com.tsingda</groupId>
       <artifactId>alipay</artifactId>
       <version>0.0.1-RELEASE</version>
     </dependency>
+    -->
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
@@ -212,6 +214,7 @@
       <version>2.2</version>  
     </dependency>
   </dependencies>
+  <!--  
   <repositories>
     <repository>
       <id>hbresp</id>
@@ -219,6 +222,7 @@
       <url>http://192.168.2.125:8081/repository/maven-public/</url>
     </repository>
   </repositories>
+  -->
   <build>
     <finalName>MyHome</finalName>
   </build>
