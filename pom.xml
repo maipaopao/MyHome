@@ -238,6 +238,8 @@
 		<configuration>
 			<javadocDirectory>target/javadoc</javadocDirectory>
 			<reportOutputDirectory>target/javadoc</reportOutputDirectory>
+			<source>1.8</source>
+            <target>1.8</target>
 			<charset>UTF-8</charset>
 			<encoding>UTF-8</encoding>
 			<docencoding>UTF-8</docencoding>
