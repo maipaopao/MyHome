@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.happiness.db.entity.UserInfo;
+import com.happiness.db.entity.mongodb.User;
 import com.happiness.db.mapper.UserInfoMapper;
+import com.happiness.db.mapper.repository.UserRepository;
 
 @Controller
 @RequestMapping("/")
@@ -34,6 +36,8 @@ public class Index {
     private RedisTemplate<String, Object> redisTemplate;
     @Resource( name="valueOps" )
     private ValueOperations<String, Object> valueOperations;
+    @Resource
+    private UserRepository userRepository;
     
     @RequestMapping("/index")
     public String index(){
@@ -54,6 +58,14 @@ public class Index {
 //    	redisTemplate.renameIfAbsent("age", "agenum");
 //    	valueOperations.set("userInfo", userInfo);
     	String jsonStr = valueOperations.get("userInfo").toString();
+    	User u = userRepository.findByPwd(userInfo.getPwd());
+    	if( null == u ){
+    		u = new User();
+    		u.setPwd(userInfo.getPwd());
+    		u.setUserName(userInfo.getUserName());
+    		userRepository.insert(u);
+    	}
+    	
     	return jsonStr;
     }
     
