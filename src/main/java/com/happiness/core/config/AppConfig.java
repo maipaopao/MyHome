@@ -14,23 +14,23 @@ import org.springframework.core.io.Resource;
 /**
  * 
  * @author Administrator
- * @PropertySource(value = { ¡°classpath:config.properties¡± })×¢½â¿ÉÒÔÈÃ
- * ÔÚapplication.propertiesÎÄ¼şÖĞ¶¨ÒåµÄÊôĞÔ¶ÔSpring Envirronment bean¿ÉÓÃ£¬
- * Environment½Ó¿ÚÌá¹©ÁËgetter·½·¨¶ÁÈ¡µ¥¶ÀµÄÊôĞÔÖµ
+ * @PropertySource(value = { "classpath:config.properties" })æ³¨è§£å¯ä»¥è®©åœ¨
+ * config.propertiesæ–‡ä»¶ä¸­å®šä¹‰çš„å±æ€§å¯¹Spring Envirronment beanå¯ç”¨
+ * Environmentæ¥å£æä¾›äº†getteræ–¹æ³•è¯»å–å•ç‹¬çš„å±æ€§å€¼
  * 
- * Â·¾¶Ğ´·¨ÊµÀı£º
- * 1¡¢@PropertySource(value = { "classpath:dev/config.properties" })µ¥¸öÎÄ¼ş
- * 2¡¢@PropertySource(value = { "classpath:dev/config.properties","classpath:dev/config2.properties" })Êı×é
- * 3¡¢@PropertySource(value = { "classpath:${spring.profiles.active:dev}/config.properties" }) 
- *              ${spring.profiles.active:dev}ÊÇweb.xmlÖĞÅäÖÃµÄÖµ spring.profiles.activeÓĞÖµÓÃÆäÖµÎŞÖµµÄ»°ÓÃ£ººóÃæµÄÖµ
+ * å†™æ³•ç¤ºä¾‹
+ * 1ã€@PropertySource(value = { "classpath:dev/config.properties" })å•æ–‡ä»¶
+ * 2ã€@PropertySource(value = { "classpath:dev/config.properties","classpath:dev/config2.properties" })å¤šæ–‡ä»¶
+ * 3ã€@PropertySource(value = { "classpath:${spring.profiles.active:dev}/config.properties" }) 
+ *              ${spring.profiles.active:dev}åœ¨web.xmlä¸­spring.profiles.activeé…ç½®
  */
 @Configuration
-@PropertySource(value = { "classpath:dev/config.properties","classpath:dev/config2.properties" })
+@PropertySource(value = { "classpath:${spring.profiles.active:dev}/config.properties" })
 public class AppConfig {
 
     /*
-     * Õâ¸öbeanÖ÷ÒªÓÃÓÚ½â¾ö@valueÖĞÊ¹ÓÃµÄ${¡­}Õ¼Î»·û
-     * ¼ÙÈçÄã²»Ê¹ÓÃ${¡­}Õ¼Î»·ûµÄ»°£¬¿ÉÒÔ²»Ê¹ÓÃÕâ¸öbean
+     * è¿™ä¸ªbeanä¸»è¦ç”¨äºè§£å†³@valueä¸­ä½¿ç”¨çš„${â€¦}å ä½ç¬¦
+     * å‡å¦‚ä½ ä¸ä½¿ç”¨${â€¦}å ä½ç¬¦çš„è¯ï¼Œå¯ä»¥ä¸ä½¿ç”¨è¿™ä¸ªbean
      */
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -41,7 +41,7 @@ public class AppConfig {
     @Bean(name = "appProperties")
     public PropertiesFactoryBean devPropertiesFactoryBean() throws IOException {
         System.out.println("=========================================================");
-        System.out.println("ÆôÓÃdev");
+        System.out.println("å¯ç”¨dev");
         System.out.println("=========================================================");
         PropertiesFactoryBean bean = new PropertiesFactoryBean();
         Resource location = new ClassPathResource("dev/config.properties");
@@ -54,7 +54,7 @@ public class AppConfig {
     @Bean(name = "appProperties")
     public PropertiesFactoryBean productionPropertiesFactoryBean() throws IOException {
         System.out.println("=========================================================");
-        System.out.println("ÆôÓÃpro");
+        System.out.println("å¯ç”¨pro");
         System.out.println("=========================================================");
         PropertiesFactoryBean bean = new PropertiesFactoryBean();
         Resource location = new ClassPathResource("production/config.properties");
