@@ -48,15 +48,15 @@ public class Index {
         return "index";
     }
     
-    @RequestMapping("/login")
+    @RequestMapping(value="/login", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String login(){
     	
     	UserInfo userInfo = userInfoMapper.selectByPrimaryKey(1);
     	System.out.println( userInfo.getNickName() );
     	
-//    	redisTemplate.renameIfAbsent("age", "agenum");
-//    	valueOperations.set("userInfo", userInfo);
+    	redisTemplate.renameIfAbsent("agenum", "ageNum");
+    	valueOperations.set("userInfo", userInfo);
     	String jsonStr = valueOperations.get("userInfo").toString();
     	User u = userRepository.findByPwd(userInfo.getPwd());
     	if( null == u ){
