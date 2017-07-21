@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -48,14 +49,15 @@ public class Index {
         return "index";
     }
     
-    @RequestMapping(value="/login", produces = "application/json; charset=utf-8")
+//    @RequestMapping(value="/login", produces = "application/json; charset=utf-8")
+    @RequestMapping(value="/login")
     @ResponseBody
     public String login(){
     	
     	UserInfo userInfo = userInfoMapper.selectByPrimaryKey(1);
     	System.out.println( userInfo.getNickName() );
     	
-    	redisTemplate.renameIfAbsent("agenum", "ageNum");
+    	redisTemplate.renameIfAbsent("ageNum", "ageNum");
     	valueOperations.set("userInfo", userInfo);
     	String jsonStr = valueOperations.get("userInfo").toString();
     	User u = userRepository.findByPwd(userInfo.getPwd());

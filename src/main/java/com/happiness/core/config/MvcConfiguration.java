@@ -1,5 +1,7 @@
 package com.happiness.core.config;
 
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +12,16 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.feed.AtomFeedHttpMessageConverter;
+import org.springframework.http.converter.feed.RssChannelHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -25,6 +36,12 @@ import com.happiness.interceptor.PathInterceptor;
 @EnableWebMvc//启动SpringMVC
 @ComponentScan("com.happiness")//启动组件扫描
 public class MvcConfiguration extends WebMvcConfigurerAdapter{
+	
+	private final static String DEFAULT_CHARSET_VALUE = "UTF-8";
+    private final static Charset DEFAULT_CHARSET = Charset.forName(DEFAULT_CHARSET_VALUE);
+
+    private final static MediaType TEXT_PLAIN_UTF8 = new MediaType("text", "plain", DEFAULT_CHARSET);
+    private final static MediaType TEXT_HTML_UTF8 = new MediaType("text", "html", DEFAULT_CHARSET);
 
     /**
      *  配置静态资源的处理
@@ -53,30 +70,31 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter{
         return new MappingJackson2HttpMessageConverter();
     }
     
-//    @SuppressWarnings("rawtypes")
-//    @Override
-//    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-//        super.configureMessageConverters(converters);
-//
-//        // StringHttpMessageConverter 配置
-//        converters.add(new ByteArrayHttpMessageConverter());
-//        converters.add(new FormHttpMessageConverter());
-//        converters.add(new Jaxb2RootElementHttpMessageConverter());
-//        converters.add(new SourceHttpMessageConverter());
-//        converters.add(new AtomFeedHttpMessageConverter());
-//        converters.add(new RssChannelHttpMessageConverter());
-//        // 设置String类型返回Content-Type:text/plain;charset=UTF-8、Content-Type:text/html;charset=UTF-8
-//        StringHttpMessageConverter stringMessageConverter = new StringHttpMessageConverter(DEFAULT_CHARSET);
-//        stringMessageConverter.setWriteAcceptCharset(false);
-//        List<MediaType> types = new ArrayList<MediaType>();
-//        types.add(TEXT_PLAIN_UTF8);
-//        types.add(MediaType.APPLICATION_JSON_UTF8);
-//        types.add(TEXT_HTML_UTF8);
-//        stringMessageConverter.setSupportedMediaTypes(types);
-//        converters.add(stringMessageConverter);
-//        converters.add(mappingJackson2HttpMessageConverter());
-//
-//    }
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        super.configureMessageConverters(converters);
+
+        // StringHttpMessageConverter 配置
+        converters.add(new ByteArrayHttpMessageConverter());
+        converters.add(new FormHttpMessageConverter());
+        converters.add(new Jaxb2RootElementHttpMessageConverter());
+        converters.add(new SourceHttpMessageConverter());
+        converters.add(new AtomFeedHttpMessageConverter());
+        converters.add(new RssChannelHttpMessageConverter());
+        // 设置String类型返回Content-Type:text/plain;charset=UTF-8、Content-Type:text/html;charset=UTF-8
+        //处理responsebody中文乱码
+        StringHttpMessageConverter stringMessageConverter = new StringHttpMessageConverter(DEFAULT_CHARSET);
+        stringMessageConverter.setWriteAcceptCharset(false);
+        List<MediaType> types = new ArrayList<MediaType>();
+        types.add(TEXT_PLAIN_UTF8);
+        types.add(MediaType.APPLICATION_JSON_UTF8);
+        types.add(TEXT_HTML_UTF8);
+        stringMessageConverter.setSupportedMediaTypes(types);
+        converters.add(stringMessageConverter);
+        converters.add(mappingJackson2HttpMessageConverter());
+
+    }
 
     @Bean
     public PathInterceptor initPathInterceptor() {
