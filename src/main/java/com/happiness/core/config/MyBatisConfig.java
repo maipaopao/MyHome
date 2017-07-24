@@ -13,11 +13,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.context.support.ServletContextResourcePatternResolver;
 
 import com.alibaba.druid.pool.DruidDataSource;
 
 @Configuration
+@EnableTransactionManagement
 public class MyBatisConfig {
     
     org.apache.ibatis.session.Configuration c = new org.apache.ibatis.session.Configuration();

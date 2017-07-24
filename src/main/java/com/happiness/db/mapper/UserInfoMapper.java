@@ -1,5 +1,7 @@
 package com.happiness.db.mapper;
 
+import java.util.List;
+
 import com.happiness.db.entity.UserInfo;
 
 public interface UserInfoMapper {
@@ -50,4 +52,6 @@ public interface UserInfoMapper {
      * @mbg.generated Tue Jun 13 17:38:22 CST 2017
      */
     int updateByPrimaryKey(UserInfo record);
+
+	List<UserInfo> selectAll();
 }

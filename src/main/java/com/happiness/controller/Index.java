@@ -1,12 +1,13 @@
 package com.happiness.controller;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -14,6 +15,7 @@ import com.happiness.db.entity.UserInfo;
 import com.happiness.db.entity.mongodb.User;
 import com.happiness.db.mapper.UserInfoMapper;
 import com.happiness.db.mapper.repository.UserRepository;
+import com.happiness.service.IUsersService;
 
 @Controller
 @RequestMapping("/")
@@ -39,6 +41,9 @@ public class Index {
     private ValueOperations<String, Object> valueOperations;
     @Resource
     private UserRepository userRepository;
+    
+    @Resource
+    private IUsersService usersService;
     
     @RequestMapping("/index")
     public String index(){
@@ -69,6 +74,27 @@ public class Index {
     	}
     	
     	return jsonStr;
+    }
+    
+    @RequestMapping(value="/loginr")
+    @ResponseBody
+    public String loginr(){
+    	
+    	List<UserInfo> list = usersService.getList();
+    	for( UserInfo info : list ){
+    		System.out.println(info.getNickName());
+    	}
+    	
+    	return "读操作";
+    }
+    
+    @RequestMapping(value="/loginw")
+    @ResponseBody
+    public String loginw(){
+    	
+    	usersService.batchInsert();
+    	
+    	return "写操作";
     }
     
 }
