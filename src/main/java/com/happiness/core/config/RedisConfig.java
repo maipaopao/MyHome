@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.ListOperations;
@@ -17,6 +18,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.util.StringUtils;
 
 import com.happiness.common.utils.JsonUtil;
 
@@ -52,6 +54,12 @@ public class RedisConfig {
     @Value("${redis.msg.channel}")
     private String redisMsgChannel;
     
+    
+    @Value("${spring.redis.sentinel.master}")
+    private String redisSentinelMaster;
+    @Value("${spring.redis.sentinel.nodes}")
+    private String redisSentinelNodes; 
+    
     @PostConstruct
     public void init() {
     	System.out.println("初始化redisConfig：redisHost = " + redisHost);
@@ -64,11 +72,7 @@ public class RedisConfig {
      */
     @Bean(destroyMethod = "destroy")
     public JedisConnectionFactory redisConnectionFactory() {
-        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
-        jedisConnectionFactory.setUsePool(true);
-        jedisConnectionFactory.setHostName(redisHost);
-        jedisConnectionFactory.setPort(redisPort);
-        jedisConnectionFactory.setPassword(redisPassword);
+    	
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         //获取连接时的最大等待毫秒数(如果设置为阻塞时BlockWhenExhausted),如果超时就抛异常, 小于零:阻塞不确定的时间,  默认-1
         poolConfig.setMaxWaitMillis(redisMaxWaitMillis);
@@ -92,10 +96,38 @@ public class RedisConfig {
         poolConfig.setTestWhileIdle(true);
         //每次逐出检查时 逐出的最大数目
         poolConfig.setNumTestsPerEvictionRun(redisMaxIdle / 2);
-        jedisConnectionFactory.setPoolConfig(poolConfig);
-        // 生产环境去掉，测试只用一个DB就
-        jedisConnectionFactory.setDatabase(redisDatabase);
+        
+        //单redis配置
+//        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
+//        jedisConnectionFactory.setUsePool(true);
+//        jedisConnectionFactory.setHostName(redisHost);
+//        jedisConnectionFactory.setPort(redisPort);
+//        jedisConnectionFactory.setPassword(redisPassword);
+//        
+//        jedisConnectionFactory.setPoolConfig(poolConfig);
+//        // 生产环境去掉，测试只用一个DB就
+//        jedisConnectionFactory.setDatabase(redisDatabase);
+//        jedisConnectionFactory.afterPropertiesSet();
+        
+        //sentinel配置
+        RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration().master(redisSentinelMaster);
+        if (StringUtils.hasText(redisSentinelNodes)) {
+            String[] noes = redisSentinelNodes.split(",");
+            for (String node : noes) {
+                if (StringUtils.hasText(node) && node.contains(":")) {
+                    String[] args = node.split(":");
+                    sentinelConfig.sentinel(args[0], Integer.valueOf(args[1]));
+                }
+            }
+        }
+        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(sentinelConfig, poolConfig);
+        
+        jedisConnectionFactory.setHostName(redisHost);
+        jedisConnectionFactory.setPort(redisPort);
+        jedisConnectionFactory.setPassword(redisPassword);
+        jedisConnectionFactory.setUsePool(true);
         jedisConnectionFactory.afterPropertiesSet();
+        
         return jedisConnectionFactory;
     }
 

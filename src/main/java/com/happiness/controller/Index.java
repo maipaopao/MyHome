@@ -62,7 +62,7 @@ public class Index {
     	UserInfo userInfo = userInfoMapper.selectByPrimaryKey(1);
     	System.out.println( userInfo.getNickName() );
     	
-    	redisTemplate.renameIfAbsent("ageNum", "ageNum");
+//    	redisTemplate.renameIfAbsent("ageNum", "ageNum");
     	valueOperations.set("userInfo", userInfo);
     	String jsonStr = valueOperations.get("userInfo").toString();
     	User u = userRepository.findByPwd(userInfo.getPwd());
@@ -72,6 +72,7 @@ public class Index {
     		u.setUserName(userInfo.getUserName());
     		userRepository.insert(u);
     	}
+    	
     	
     	return jsonStr;
     }
